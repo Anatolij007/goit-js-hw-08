@@ -1,41 +1,36 @@
 import throttle from 'lodash.throttle';
 
 const form = document.querySelector('.feedback-form');
+const input = document.querySelector('input');
+const textarea = document.querySelector('textarea');
 
-//=============================//=============================
-// const INPUT_KEY = 'feedback-form-state';
+form.addEventListener('input', throttle(handleInputValue), 500);
+form.addEventListener('submit', submitSend);
 
-// form.addEventListener('input', throttle(onInputValues, 500));
-// form.addEventListener('submit', onFormSubmit);
+let formData = {};
 
-// let formData = {};
+readFormData();
 
-// function onInputValues(e) {
-//   formData = JSON.parse(localStorage.getItem(INPUT_KEY)) || {};
+function readFormData() {
+  if (!JSON.parse(localStorage.getItem('feedback-form-state'))) {
+    return;
+  }
+  input.value =
+    JSON.parse(localStorage.getItem('feedback-form-state')).value || '';
+  textarea.value =
+    JSON.parse(localStorage.getItem('feedback-form-state')).value || '';
+}
 
-//   formData[e.target.name] = e.target.value;
+function handleInputValue(event) {
+  formData = JSON.parse(localStorage.getItem('feedback-form-state')) || {};
 
-//   localStorage.setItem(INPUT_KEY, JSON.stringify(formData));
-// }
-// //=============================
-// restoreInputData();
+  formData[event.target.name] = event.target.value;
+  localStorage.setItem('feedback-form-state', JSON.stringify(formData));
+}
 
-// function restoreInputData() {
-//   const savedData = JSON.parse(localStorage.getItem(INPUT_KEY));
-
-//   if (!savedData) {
-//     return;
-//   }
-//   form.email.value = savedData.email || '';
-//   form.message.value = savedData.message || '';
-// }
-// //=============================
-
-// function onFormSubmit(e) {
-//   e.preventDefault();
-
-//   console.log(JSON.parse(localStorage.getItem(INPUT_KEY)));
-
-//   e.currentTarget.reset();
-//   localStorage.removeItem(INPUT_KEY);
-// }
+function submitSend(event) {
+  event.preventDefault();
+  console.log(JSON.parse(localStorage.getItem('feedback-form-state')));
+  event.currentTarget.reset();
+  localStorage.removeItem('feedback-form-state');
+}
