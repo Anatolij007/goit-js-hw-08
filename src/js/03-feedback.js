@@ -5,10 +5,18 @@ const LOCAL_KEY = 'feedback-form-state';
 const parseJson = JSON.parse(localStorage.getItem(LOCAL_KEY));
 const formData = parseJson || {};
 
-readFormData();
-
 form.addEventListener('submit', submitSend);
 form.addEventListener('input', throttle(handleInputValue, 500));
+
+readFormData();
+
+function readFormData() {
+  if (parseJson) {
+    Object.entries(parseJson).forEach(([name, value]) => {
+      form.elements[name].value = value;
+    });
+  }
+}
 
 function handleInputValue(event) {
   formData[event.target.name] = event.target.value;
@@ -22,12 +30,4 @@ function submitSend(event) {
 
   localStorage.removeItem(LOCAL_KEY);
   console.log(formData);
-}
-
-function readFormData() {
-  if (parseJson) {
-    Object.entries(parseJson).forEach(([name, value]) => {
-      form.elements[name].value = value;
-    });
-  }
 }
