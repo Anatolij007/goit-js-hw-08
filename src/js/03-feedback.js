@@ -1,36 +1,33 @@
 import throttle from 'lodash.throttle';
 
 const form = document.querySelector('.feedback-form');
-const input = document.querySelector('input');
-const textarea = document.querySelector('textarea');
-
-form.addEventListener('input', throttle(handleInputValue), 500);
-form.addEventListener('submit', submitSend);
-
-let formData = {};
+const LOCAL_KEY = 'feedback-form-state';
+const parseJson = JSON.parse(localStorage.getItem(LOCAL_KEY));
+const formData = parseJson || {};
 
 readFormData();
 
-function readFormData() {
-  if (!JSON.parse(localStorage.getItem('feedback-form-state'))) {
-    return;
-  }
-  input.value =
-    JSON.parse(localStorage.getItem('feedback-form-state')).value || '';
-  textarea.value =
-    JSON.parse(localStorage.getItem('feedback-form-state')).value || '';
-}
+form.addEventListener('submit', submitSend);
+form.addEventListener('input', throttle(handleInputValue, 500));
 
 function handleInputValue(event) {
-  formData = JSON.parse(localStorage.getItem('feedback-form-state')) || {};
-
   formData[event.target.name] = event.target.value;
-  localStorage.setItem('feedback-form-state', JSON.stringify(formData));
+
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(formData));
 }
 
 function submitSend(event) {
   event.preventDefault();
-  console.log(JSON.parse(localStorage.getItem('feedback-form-state')));
   event.currentTarget.reset();
-  localStorage.removeItem('feedback-form-state');
+
+  localStorage.removeItem(LOCAL_KEY);
+  console.log(formData);
+}
+
+function readFormData() {
+  if (parseJson) {
+    Object.entries(parseJson).forEach(([name, value]) => {
+      form.elements[name].value = value;
+    });
+  }
 }
