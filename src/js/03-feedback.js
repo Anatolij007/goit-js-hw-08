@@ -1,6 +1,8 @@
 import throttle from 'lodash.throttle';
 
 const form = document.querySelector('.feedback-form');
+const input = document.querySelector('input');
+const textarea = document.querySelector('textarea');
 const LOCAL_KEY = 'feedback-form-state';
 const parseJson = JSON.parse(localStorage.getItem(LOCAL_KEY));
 const formData = parseJson || {};
@@ -11,11 +13,9 @@ form.addEventListener('input', throttle(handleInputValue, 500));
 readFormData();
 
 function readFormData() {
-  if (parseJson) {
-    Object.entries(parseJson).forEach(([name, value]) => {
-      form.elements[name].value = value;
-    });
-  }
+  if (!parseJson) return;
+  input.value = parseJson.input || '';
+  textarea.value = parseJson.textarea || '';
 }
 
 function handleInputValue(event) {
