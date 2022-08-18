@@ -11,7 +11,7 @@ form.addEventListener('input', throttle(handleInputValue, 500));
 readFormData();
 
 function readFormData() {
-  dataSave = JSON.parse(localStorage.getItem(LOCAL_KEY));
+  const dataSave = JSON.parse(localStorage.getItem(LOCAL_KEY));
   if (!dataSave) return;
   form.email.value = dataSave.email || '';
   form.message.value = dataSave.message || '';
